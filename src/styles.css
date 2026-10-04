@@ -611,6 +611,20 @@ html[dir="rtl"] .fill-btn__bg {
 }
 .wood-round {
   background:
+    radial-gradient(circle at 32% 28%, oklch(0.8 0.08 70 / 0.12), transparent 45%),
+    repeating-linear-gradient(
+      100deg,
+      oklch(0.2 0.03 45 / 0.12) 0 1px,
+      transparent 1px 7px,
+      oklch(0.45 0.07 55 / 0.06) 7px 9px,
+      transparent 9px 13px
+    ),
+    repeating-radial-gradient(
+      circle at 44% 57%,
+      transparent 0 5px,
+      oklch(0.22 0.04 45 / 0.18) 5px 6px,
+      transparent 6px 21px
+    ),
     radial-gradient(
       circle at 50% 50%,
       transparent 0 60%,
@@ -626,6 +640,7 @@ html[dir="rtl"] .fill-btn__bg {
   box-shadow:
     0 50px 90px -30px black,
     inset 0 0 0 10px oklch(0.24 0.04 45),
+    inset 2px 3px 0 11px oklch(0.42 0.06 55 / 0.5),
     inset 0 0 60px oklch(0 0 0 / 0.45);
 }
 
