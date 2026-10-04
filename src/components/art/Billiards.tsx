@@ -44,7 +44,7 @@ export function Ball({ n, className = "" }: { n: number; className?: string }) {
   const color = COLORS[n > 8 ? n - 8 : n]!;
   const stripe = n > 8;
   return (
-    <svg viewBox="0 0 100 100" className={className} aria-hidden focusable="false">
+    <svg viewBox="0 0 100 100" lang="en" className={className} aria-hidden focusable="false">
       <circle cx="50" cy="50" r="49" fill={stripe ? color : COLORS[n]} />
       <g clipPath="url(#ball-clip)">
         {stripe && (

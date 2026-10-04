@@ -8,6 +8,7 @@ type Props = {
   style?: CSSProperties;
   sizes?: string;
   priority?: boolean;
+  loading?: "eager" | "lazy";
 };
 
 export function Photo({
@@ -17,6 +18,7 @@ export function Photo({
   style,
   sizes = "100vw",
   priority = false,
+  loading = priority ? "eager" : "lazy",
 }: Props) {
   return (
     <img
@@ -26,7 +28,7 @@ export function Photo({
       width={img.width}
       height={img.height}
       alt={alt}
-      loading={priority ? "eager" : "lazy"}
+      loading={loading}
       decoding={priority ? "sync" : "async"}
       fetchPriority={priority ? "high" : "auto"}
       draggable={false}

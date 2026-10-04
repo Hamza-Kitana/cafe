@@ -3,7 +3,7 @@ import { gsap, useScene, cue } from "@/lib/motion";
 import { useI18n } from "@/i18n";
 import { featured, menuItem } from "@/data/menu";
 import { digits, fmtPrice } from "@/data/cafe";
-import { Bean, BeanDefs, Cup } from "@/components/art/Cup";
+import { Bean, Cup } from "@/components/art/Cup";
 import { SmokeCanvas, type SmokeState } from "@/components/SmokeCanvas";
 import { Chapter } from "@/components/Chapter";
 
@@ -150,7 +150,6 @@ export function CoffeeLab() {
       className="relative h-screen overflow-hidden bg-[radial-gradient(ellipse_at_50%_70%,var(--coffee),var(--ink)_70%)]"
       data-cursor={t.cursor.taste}
     >
-      <BeanDefs />
       {beans.map((b, i) => (
         <div
           key={i}

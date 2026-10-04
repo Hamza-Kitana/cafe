@@ -1087,6 +1087,49 @@ html[dir="rtl"] .chapter-label {
   }
 }
 
+/* Inside: per-word ambience. Opacity belongs to the scroll timeline, so loops only touch translate/scale. */
+.i-steam {
+  animation: i-steam 4.2s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+@keyframes i-steam {
+  0% {
+    translate: 0 30%;
+    scale: 0.7 0.6;
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 -25%;
+    scale: 1.4 1.1;
+    opacity: 0;
+  }
+}
+.i-bokeh {
+  animation: i-bokeh 9s ease-in-out infinite alternate;
+}
+@keyframes i-bokeh {
+  to {
+    translate: 4vmin -6vmin;
+    scale: 1.25;
+  }
+}
+.i-star {
+  box-shadow: 0 0 6px rgb(255 240 210 / 0.9);
+  animation: i-star 3.4s ease-in-out infinite;
+}
+@keyframes i-star {
+  0%,
+  100% {
+    scale: 0.5;
+  }
+  50% {
+    scale: 1.4;
+  }
+}
+
 /* Realistic liquids: carbonation rising with a wobble, condensation sliding down the glass */
 .gl-bub {
   transform-box: fill-box;

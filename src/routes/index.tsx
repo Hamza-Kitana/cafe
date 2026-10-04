@@ -4,6 +4,7 @@ import { useI18n } from "@/i18n";
 import { ScrollTrigger, lenisRef } from "@/lib/motion";
 import { Loader } from "@/components/chrome/Loader";
 import { BallDefs } from "@/components/art/Billiards";
+import { BeanDefs } from "@/components/art/Cup";
 import { Entrance } from "@/sections/Entrance";
 import { Inside } from "@/sections/Inside";
 import { CoffeeLab } from "@/sections/CoffeeLab";
@@ -92,6 +93,7 @@ function Index() {
     <>
       <SkipLink />
       <BallDefs />
+      <BeanDefs />
       {!skipIntro && <Loader onDone={done} />}
       <ChapterIndicator />
       <main data-i18n-root>

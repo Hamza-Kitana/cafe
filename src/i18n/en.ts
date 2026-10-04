@@ -151,6 +151,13 @@ export const en = {
       "Stay as long as you like — the lights stay on.",
     ],
     welcome: "Welcome to Layali",
+    chatter: [
+      { who: "S", say: "Finally, you're here!" },
+      { who: "O", say: "Same table as always?" },
+      { who: "L", say: "This round's on me" },
+      { who: "R", say: "Who's winning tonight?" },
+      { who: "M", say: "Wait, one more story…" },
+    ],
   },
 
   coffee: {

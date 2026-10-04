@@ -21,8 +21,8 @@ export function Entrance({ ready }: { ready: boolean }) {
     const q = (sel: string, prop: string, duration: number) =>
       gsap.quickTo(sel, prop, { duration });
     const parallax = [
-      [q(".e-door", "rotateY", 1), 6, "x"],
-      [q(".e-door", "rotateX", 1), -3, "y"],
+      [q(".e-door", "rotationY", 1), 6, "x"],
+      [q(".e-door", "rotationX", 1), -3, "y"],
       [q(".e-glow", "x", 1.2), 60, "x"],
       [q(".e-glow", "y", 1.2), 30, "y"],
       [q(".e-bg", "x", 1.4), -24, "x"],
