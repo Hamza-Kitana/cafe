@@ -251,6 +251,21 @@ export function Cup({ className = "" }: { className?: string }) {
             opacity="0.18"
             filter="url(#cup-softer)"
           />
+          {[0, 1].map((k) => (
+            <ellipse
+              key={k}
+              className="c-ripple"
+              cx="150"
+              cy="86"
+              rx="12"
+              ry="3"
+              fill="none"
+              stroke="#fff"
+              strokeOpacity="0.55"
+              strokeWidth="1.5"
+              opacity="0"
+            />
+          ))}
         </g>
         <ellipse
           cx="150"

@@ -66,16 +66,30 @@ export function CoffeeLab() {
             { opacity: 1, y: 0, duration: 0.3 },
             `d${i}+=0.15`,
           )
-          // A fresh pour: the stream drops in, the surface morphs and sloshes, the stream thins out.
+          // A fresh pour: the stream falls until it meets the surface, the drink morphs and
+          // sloshes, then the tail of the stream drops into the cup.
           .fromTo(
             ".c-pour",
-            { scaleY: 0, opacity: 1, transformOrigin: "50% 0%" },
-            { scaleY: 1, duration: 0.15, ease: "power1.in" },
+            { yPercent: -100, opacity: 1 },
+            { yPercent: 0, duration: 0.15, ease: "power1.in" },
             `d${i}`,
           )
           .to(".c-cup", { ...DRINK[i]!, duration: 0.45 }, `d${i}+=0.1`)
-          .to(".c-pour", { opacity: 0, scaleX: 0.3, duration: 0.15 }, `d${i}+=0.4`)
-          .set(".c-pour", { scaleX: 1 }, `d${i}+=0.56`)
+          .to(".c-pour", { yPercent: 100, duration: 0.15, ease: "power1.in" }, `d${i}+=0.4`)
+          .set(".c-pour", { opacity: 0 }, `d${i}+=0.56`)
+          .fromTo(
+            ".c-ripple",
+            { scale: 0.4, opacity: 0.9 },
+            {
+              scale: 4,
+              opacity: 0,
+              svgOrigin: "150 86",
+              duration: 0.25,
+              ease: "power1.out",
+              stagger: { each: 0.12, repeat: 1 },
+            },
+            `d${i}+=0.14`,
+          )
           .fromTo(
             ".c-surface",
             { rotate: i % 2 ? 5 : -5 },
@@ -180,7 +194,7 @@ export function CoffeeLab() {
           aria-hidden
         >
           {t.coffee.ingredients.map((ing, i) => {
-            const a = (i / t.coffee.ingredients.length) * Math.PI * 2 - Math.PI / 2;
+            const a = ((i + 0.5) / t.coffee.ingredients.length) * Math.PI * 2 - Math.PI / 2;
             return (
               <span
                 key={i}
@@ -197,9 +211,12 @@ export function CoffeeLab() {
             className="c-cup relative w-[17rem] md:w-[26rem]"
             style={DRINK[0] as unknown as CSSProperties}
           >
+            <div ref={rim} className="absolute left-[18%] top-[24%] h-px w-[56%]" />
+            <Cup className="relative block w-full overflow-visible" />
+            {/* Above the cup so the stream passes in front of the back rim; it ends at the surface, behind the front lip. */}
             <div className="pointer-events-none absolute inset-x-0 -top-[40vh] bottom-[71%] flex justify-center overflow-hidden [direction:ltr]">
               <div
-                className="c-pour h-full w-[0.45rem] origin-top rounded-b-full opacity-0 md:w-[0.6rem]"
+                className="c-pour h-full w-[0.45rem] rounded-full opacity-0 md:w-[0.6rem]"
                 style={{
                   marginInlineEnd: "6.25%",
                   background:
@@ -207,8 +224,6 @@ export function CoffeeLab() {
                 }}
               />
             </div>
-            <div ref={rim} className="absolute left-[18%] top-[24%] h-px w-[56%]" />
-            <Cup className="relative block w-full overflow-visible" />
           </div>
         </div>
 
