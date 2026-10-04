@@ -101,10 +101,10 @@ export function ShishaLounge() {
         className="pointer-events-none absolute inset-0 z-10 h-full w-full"
       />
 
-      <h2 className="s-relax smoke-mask display pointer-events-none absolute inset-x-0 top-[22%] z-20 text-center text-[24vw] leading-none opacity-0 md:top-[16%] md:text-[18vw]">
+      <h2 className="s-relax smoke-mask display pointer-events-none absolute inset-x-0 top-[22%] z-20 -mt-[0.3em] py-[0.3em] text-center text-[24vw] leading-none opacity-0 md:top-[16%] md:text-[18vw]">
         {t.shisha.relax}
       </h2>
-      <h2 className="s-flavor smoke-mask display pointer-events-none absolute inset-x-6 top-[30%] z-20 text-center text-6xl opacity-0 md:inset-x-auto md:start-12 md:top-[38%] md:max-w-[40vw] md:text-start md:text-8xl">
+      <h2 className="s-flavor smoke-mask display pointer-events-none absolute inset-x-6 top-[30%] z-20 -mt-[0.25em] py-[0.25em] text-center text-6xl opacity-0 md:inset-x-auto md:start-12 md:top-[38%] md:max-w-[40vw] md:text-start md:text-8xl">
         {t.shisha.flavor}
       </h2>
 
