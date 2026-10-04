@@ -53,7 +53,6 @@ export function MenuPage() {
   const root = useRef<HTMLElement>(null);
   const pills = useRef<(HTMLButtonElement | null)[]>([]);
   const [query, setQuery] = useState("");
-  const [sigOnly, setSigOnly] = useState(false);
   const [active, setActive] = useState(-1);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
@@ -65,15 +64,12 @@ export function MenuPage() {
           ...c,
           items: c.items.filter(
             (i) =>
-              (!sigOnly || i.signature) &&
-              (!q ||
-                [i.name.en, i.name.ar, i.desc.en, i.desc.ar].some((s) =>
-                  s.toLowerCase().includes(q),
-                )),
+              !q ||
+              [i.name.en, i.name.ar, i.desc.en, i.desc.ar].some((s) => s.toLowerCase().includes(q)),
           ),
         }))
         .filter((c) => c.items.length),
-    [q, sigOnly],
+    [q],
   );
   const layoutKey = cats.map((c) => `${c.id}${c.items.length}`).join();
 
@@ -232,8 +228,7 @@ export function MenuPage() {
 
   const pick = (id: string) => {
     setQuery("");
-    setSigOnly(false);
-    // Wait a frame so a cleared filter has re-rendered the row before we scroll to it.
+    // Wait a frame so a cleared search has re-rendered the row before we scroll to it.
     requestAnimationFrame(() => {
       const row = document.getElementById(`item-${id}`);
       scrollToEl(row);
@@ -415,41 +410,27 @@ export function MenuPage() {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <label className="relative flex flex-1 items-center md:w-64 md:flex-none">
-              <svg
-                viewBox="0 0 24 24"
-                className="pointer-events-none absolute start-4 h-4 w-4 text-cream/50"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden
-              >
-                <circle cx="11" cy="11" r="7" />
-                <path d="M20 20l-3.5-3.5" strokeLinecap="round" />
-              </svg>
-              <span className="sr-only">{m.search}</span>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={m.search}
-                className="w-full rounded-full border border-cream/10 bg-cream/5 py-2.5 pe-4 ps-10 text-sm text-cream outline-none transition-colors placeholder:text-cream/40 focus:border-[var(--accent)]"
-              />
-            </label>
-            <button
-              onClick={() => setSigOnly((v) => !v)}
-              aria-pressed={sigOnly}
-              className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-semibold transition-colors ${
-                sigOnly
-                  ? "border-gold bg-gold text-ink"
-                  : "border-cream/10 text-cream/70 hover:border-cream/40"
-              }`}
+          <label className="relative flex items-center md:w-64 md:shrink-0">
+            <svg
+              viewBox="0 0 24 24"
+              className="pointer-events-none absolute start-4 h-4 w-4 text-cream/50"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden
             >
-              <span aria-hidden>★</span>
-              <span className="hidden sm:inline">{m.signatureOnly}</span>
-            </button>
-          </div>
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" strokeLinecap="round" />
+            </svg>
+            <span className="sr-only">{m.search}</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={m.search}
+              className="w-full rounded-full border border-cream/10 bg-cream/5 py-2.5 pe-4 ps-10 text-sm text-cream outline-none transition-colors placeholder:text-cream/40 focus:border-[var(--accent)]"
+            />
+          </label>
         </div>
       </div>
 
@@ -459,13 +440,7 @@ export function MenuPage() {
             ☕
           </div>
           <p className="display mt-6 text-3xl">{m.empty}</p>
-          <button
-            onClick={() => {
-              setQuery("");
-              setSigOnly(false);
-            }}
-            className="link-underline mt-6 text-sm text-amber"
-          >
+          <button onClick={() => setQuery("")} className="link-underline mt-6 text-sm text-amber">
             {m.clear}
           </button>
         </div>

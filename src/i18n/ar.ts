@@ -43,7 +43,6 @@ export const ar: Dict = {
     stats: { items: "صنف", categories: "قسم", signatures: "من توقيعنا" },
     scroll: "انزل وذوق",
     search: "دوّر بالمنيو…",
-    signatureOnly: "توقيعنا بس",
     sigKicker: "بتوقيعنا",
     sigTitle: "خمسة بنحط اسمنا عليهم.",
     sigSub: "الأصناف اللي زباينّا الدايمين بطلبوها بدون ما يفتحوا المنيو.",

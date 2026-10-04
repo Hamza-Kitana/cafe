@@ -42,7 +42,6 @@ export const en = {
     stats: { items: "Items", categories: "Categories", signatures: "Signatures" },
     scroll: "Scroll to taste",
     search: "Search the menu…",
-    signatureOnly: "Signatures only",
     sigKicker: "Signatures",
     sigTitle: "Five we'd sign our name on.",
     sigSub: "The ones our regulars order without opening the menu.",
