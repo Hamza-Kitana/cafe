@@ -1,4 +1,12 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";
+﻿import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
 import { gsap, useScene, lenisRef, reducedMotion, isTouch } from "@/lib/motion";
 import { useI18n } from "@/i18n";
 import { useUI } from "@/lib/ui";
@@ -8,10 +16,12 @@ import { cafe, digits, fmtPrice } from "@/data/cafe";
 import { images } from "@/data/images";
 import { Photo } from "@/components/Photo";
 import { FillButton } from "@/components/Magnetic";
-import { Marquee } from "@/components/Marquee";
 
 const ALL_ITEMS = menu.flatMap((c) => c.items);
-const SIGNATURES = ALL_ITEMS.filter((i) => i.signature);
+const SIGNATURES = menu.flatMap((cat) =>
+  cat.items.filter((i) => i.signature).map((item) => ({ item, cat })),
+);
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Hero collage: one photo per category, scattered around the title. Units are vw / %. */
 const TILES = [
@@ -220,6 +230,26 @@ export function MenuPage() {
     pill.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
   }, [active, lang, layoutKey]);
 
+  const pick = (id: string) => {
+    setQuery("");
+    setSigOnly(false);
+    // Wait a frame so a cleared filter has re-rendered the row before we scroll to it.
+    requestAnimationFrame(() => {
+      const row = document.getElementById(`item-${id}`);
+      scrollToEl(row);
+      if (row && !reducedMotion())
+        gsap.fromTo(
+          row,
+          { boxShadow: "0 0 0 2px var(--gold), 0 0 40px rgb(212 175 106 / 0.45)" },
+          {
+            boxShadow: "0 0 0 0px var(--gold), 0 0 0px rgb(212 175 106 / 0)",
+            duration: 2.2,
+            delay: 1,
+          },
+        );
+    });
+  };
+
   const titleParts = lang === "ar" ? m.title.split(" ") : [...m.title];
 
   return (
@@ -295,7 +325,7 @@ export function MenuPage() {
             )}
           </h1>
           <p className="mp-fade mx-auto mt-6 max-w-xl text-cream/70 md:text-lg">{m.sub}</p>
-          <dl className="mp-fade mx-auto mt-10 flex max-w-lg justify-center divide-x divide-cream/15 rtl:divide-x-reverse">
+          <dl className="mp-fade mx-auto mt-10 flex max-w-lg justify-center">
             {(
               [
                 [ALL_ITEMS.length, m.stats.items],
@@ -303,7 +333,10 @@ export function MenuPage() {
                 [SIGNATURES.length, m.stats.signatures],
               ] as const
             ).map(([n, label]) => (
-              <div key={label} className="flex flex-col-reverse px-6 md:px-10">
+              <div
+                key={label}
+                className="flex flex-col-reverse border-cream/15 px-6 md:px-10 [&+&]:border-s"
+              >
                 <dt className="mt-1 text-[0.65rem] uppercase tracking-[0.25em] text-cream/50">
                   {label}
                 </dt>
@@ -317,7 +350,7 @@ export function MenuPage() {
           </dl>
         </div>
 
-        <div className="mp-fade absolute bottom-[calc(2rem+var(--tab))] left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 text-[0.65rem] uppercase tracking-[0.3em] text-cream/50">
+        <div className="mp-fade absolute bottom-[calc(2rem+var(--tab))] left-1/2 hidden -translate-x-1/2 md:flex flex-col items-center gap-3 text-[0.65rem] uppercase tracking-[0.3em] text-cream/50">
           {m.scroll}
           <span className="relative h-12 w-px overflow-hidden bg-cream/15">
             <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-cue_1.8s_ease-in-out_infinite] bg-amber" />
@@ -325,22 +358,37 @@ export function MenuPage() {
         </div>
       </section>
 
-      <div className="border-y border-cream/10 py-4" aria-hidden>
-        <Marquee speed={45}>
-          {SIGNATURES.map((item) => (
-            <span
-              key={item.id}
-              className="display flex items-center gap-6 whitespace-nowrap px-6 text-3xl md:text-5xl"
+      <section className="relative overflow-hidden py-20 md:py-28" aria-labelledby="mp-sig-title">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(ellipse_at_50%_0%,rgb(212_175_106/0.14),transparent_55%)]"
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-[90rem] px-6 md:px-12">
+          <div className="reveal flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+            <span className="h-px w-10 bg-gold/60" aria-hidden />★ {m.sigKicker}
+          </div>
+          <div className="mt-5 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <h2
+              id="mp-sig-title"
+              className="reveal display max-w-2xl text-5xl leading-[1.05] md:text-7xl"
             >
-              <span className="type-serif-italic">{item.name[lang]}</span>
-              <span className="text-lg tabular-nums text-gold md:text-2xl">
-                {fmtPrice(item.price, lang)}
-              </span>
-              <span className="text-amber">✦</span>
-            </span>
+              {m.sigTitle}
+            </h2>
+            <p className="reveal max-w-sm text-cream/60">{m.sigSub}</p>
+          </div>
+        </div>
+        <ol className="relative mt-12 flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] md:scroll-px-12 md:gap-6 md:px-12">
+          {SIGNATURES.map(({ item, cat }, i) => (
+            <SignatureCard
+              key={item.id}
+              item={item}
+              cat={cat}
+              index={i}
+              onPick={() => pick(item.id)}
+            />
           ))}
-        </Marquee>
-      </div>
+        </ol>
+      </section>
 
       <div className="sticky top-[calc(4.75rem+env(safe-area-inset-top))] z-30 mt-6 px-4 md:top-[5.25rem] md:px-8">
         <div className="mx-auto flex max-w-[90rem] flex-col gap-3 rounded-[1.75rem] border border-cream/10 bg-ink/75 p-2 shadow-2xl backdrop-blur-xl md:flex-row md:items-center">
@@ -361,7 +409,7 @@ export function MenuPage() {
                 }`}
               >
                 {c.title[lang]}
-                <span className="ms-1.5 tabular-nums opacity-60">
+                <span className="ms-2 inline-grid min-w-[1.25rem] place-items-center rounded-full bg-current/15 px-1 py-px text-[0.6rem] tabular-nums">
                   {digits(c.items.length, lang)}
                 </span>
               </button>
@@ -460,10 +508,10 @@ function Category({ cat, index }: { cat: MenuCategory; index: number }) {
     <section
       id={`cat-${cat.id}`}
       aria-label={cat.title[lang]}
-      className="mp-cat relative scroll-mt-40 py-20 md:py-28"
+      className="mp-cat relative scroll-mt-40 py-16 md:py-28"
       style={{ ["--accent" as string]: cat.accent } as CSSProperties}
     >
-      <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-12 px-6 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-16 md:px-12">
+      <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-8 px-4 sm:px-6 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-16 md:px-12">
         <div className="md:sticky md:top-44 md:self-start">
           <div className="flex items-end justify-between gap-4">
             <span
@@ -487,7 +535,7 @@ function Category({ cat, index }: { cat: MenuCategory; index: number }) {
             ))}
           </h2>
           <p className="mt-4 max-w-sm text-cream/65">{cat.tagline[lang]}</p>
-          <div className="mp-img relative mt-8 hidden aspect-[4/5] max-w-sm overflow-hidden rounded-t-full md:block">
+          <div className="mp-img relative mt-8 aspect-[16/10] overflow-hidden rounded-[2rem] md:aspect-[4/5] md:max-w-sm md:rounded-b-none md:rounded-t-full">
             <Photo
               img={images[cat.image]}
               alt=""
@@ -508,9 +556,9 @@ function Category({ cat, index }: { cat: MenuCategory; index: number }) {
           </div>
         </div>
 
-        <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ol className="flex flex-col gap-1">
           {cat.items.map((item) => (
-            <ItemCard key={item.id} item={item} accent={cat.accent} />
+            <ItemRow key={item.id} item={item} accent={cat.accent} />
           ))}
         </ol>
       </div>
@@ -518,65 +566,186 @@ function Category({ cat, index }: { cat: MenuCategory; index: number }) {
   );
 }
 
-function ItemCard({ item, accent }: { item: MenuItem; accent: string }) {
+function ItemRow({ item, accent }: { item: MenuItem; accent: string }) {
   const { t, lang } = useI18n();
   const other = lang === "en" ? "ar" : "en";
   const dot = item.color ?? accent;
   return (
     <li
-      onPointerMove={spotlight}
-      className={`reveal group relative overflow-hidden rounded-[1.75rem] border border-cream/10 bg-black/25 p-6 transition-[border-color,translate] duration-500 hover:-translate-y-1 hover:border-[var(--accent)]/60 md:p-7 ${
-        item.signature ? "sm:col-span-2" : ""
+      id={`item-${item.id}`}
+      className={`reveal group relative scroll-mt-48 rounded-2xl px-4 py-5 transition-colors duration-500 md:px-6 ${
+        item.signature
+          ? "my-2 border border-gold/35 bg-[linear-gradient(110deg,rgb(212_175_106/0.13),transparent_65%)]"
+          : "border-b border-cream/[0.07] hover:bg-cream/[0.04]"
       }`}
     >
-      <span
-        className="spot pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        aria-hidden
-      />
-      <div className="relative flex items-start justify-between gap-4">
+      <div className="flex items-baseline gap-3">
         <span
-          className="relative h-11 w-11 shrink-0 rounded-full shadow-[inset_-4px_-6px_10px_rgb(0_0_0/0.35)] transition-transform duration-700 group-hover:rotate-[200deg] group-hover:scale-110"
-          style={{
-            background: `radial-gradient(circle at 30% 30%, color-mix(in oklab, ${dot} 60%, white), ${dot} 55%, color-mix(in oklab, ${dot} 60%, black))`,
-          }}
+          className="h-2.5 w-2.5 shrink-0 -translate-y-[0.1em] rounded-full transition-transform duration-500 group-hover:scale-150"
+          style={{ background: dot, boxShadow: `0 0 12px ${dot}` }}
           aria-hidden
-        >
-          <span className="absolute left-2 top-2 h-2 w-3 rotate-[-30deg] rounded-full bg-white/50 blur-[1px]" />
-        </span>
-        <span className="rounded-full border border-gold/40 px-3 py-1 text-sm font-semibold tabular-nums text-gold transition-colors duration-300 group-hover:border-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-ink">
+        />
+        <h3 className="display min-w-0 text-xl md:text-2xl">{item.name[lang]}</h3>
+        <span className="leader" aria-hidden />
+        <span className="shrink-0 font-semibold tabular-nums text-gold md:text-lg">
           {fmtPrice(item.price, lang)}
         </span>
       </div>
-      <div
-        className={
-          item.signature ? "relative md:flex md:items-end md:justify-between md:gap-8" : "relative"
-        }
-      >
-        <div>
-          <h3
-            className={`display mt-6 ${item.signature ? "text-4xl md:text-5xl" : "text-2xl md:text-3xl"}`}
-          >
-            {item.name[lang]}
-          </h3>
-          <div
+      <div className="ps-[1.375rem]">
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <span
             lang={other}
             dir={other === "ar" ? "rtl" : "ltr"}
-            className={`mt-1 text-sm text-cream/45 ${other === "ar" ? "font-arabic" : "font-latin italic"}`}
+            className={`text-xs text-cream/45 ${other === "ar" ? "font-arabic" : "font-latin italic"}`}
           >
             {item.name[other]}
-          </div>
+          </span>
+          {item.signature && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gold px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-widest text-ink">
+              ★ {t.menu.signature}
+            </span>
+          )}
         </div>
-        <p
-          className={`mt-3 text-sm leading-relaxed text-cream/65 ${item.signature ? "md:max-w-xs" : ""}`}
-        >
-          {item.desc[lang]}
-        </p>
+        <p className="mt-2 max-w-lg text-sm leading-relaxed text-cream/60">{item.desc[lang]}</p>
       </div>
-      {item.signature && (
-        <span className="relative mt-5 inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-widest text-gold">
-          ★ {t.menu.signature}
-        </span>
-      )}
     </li>
+  );
+}
+
+function SignatureCard({
+  item,
+  cat,
+  index,
+  onPick,
+}: {
+  item: MenuItem;
+  cat: MenuCategory;
+  index: number;
+  onPick: () => void;
+}) {
+  const { lang } = useI18n();
+  const other = lang === "en" ? "ar" : "en";
+  return (
+    <li
+      className="reveal w-[80vw] max-w-[22rem] shrink-0 snap-start"
+      style={{ ["--accent" as string]: cat.accent } as CSSProperties}
+    >
+      <button
+        type="button"
+        onClick={onPick}
+        onPointerMove={spotlight}
+        className="group relative flex aspect-[3/4] w-full flex-col overflow-hidden rounded-[2rem] border border-cream/10 text-start shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9)] transition-[translate,border-color] duration-500 hover:-translate-y-1.5 hover:border-[var(--accent)]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
+      >
+        <Photo
+          img={images[cat.image]}
+          alt=""
+          sizes="22rem"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
+          style={{ objectPosition: cat.imagePosition }}
+        />
+        <span
+          className="absolute inset-0 mix-blend-color"
+          style={{ backgroundColor: cat.accent, opacity: 0.28 }}
+          aria-hidden
+        />
+        <span
+          className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/10"
+          aria-hidden
+        />
+        <span
+          className="spot pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          aria-hidden
+        />
+
+        <span className="relative flex items-center justify-between p-5">
+          <span
+            dir="ltr"
+            className="font-latin text-xs font-semibold tabular-nums tracking-[0.25em] text-cream/70"
+          >
+            <span className="text-cream">{pad(index + 1)}</span> / {pad(SIGNATURES.length)}
+          </span>
+          <span
+            className="rounded-full border border-cream/15 bg-black/40 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-widest backdrop-blur"
+            style={{ color: cat.accent }}
+          >
+            {cat.title[lang]}
+          </span>
+        </span>
+
+        <Seal className="absolute end-4 top-16 h-20 w-20 text-gold drop-shadow-[0_6px_16px_rgb(0_0_0/0.6)] md:h-24 md:w-24" />
+
+        <span className="relative mt-auto block p-6">
+          <span className="display block text-4xl leading-tight">{item.name[lang]}</span>
+          <span
+            lang={other}
+            dir={other === "ar" ? "rtl" : "ltr"}
+            className={`mt-1 block text-sm text-cream/50 ${other === "ar" ? "font-arabic" : "font-latin italic"}`}
+          >
+            {item.name[other]}
+          </span>
+          <span className="mt-3 block text-sm leading-relaxed text-cream/75">
+            {item.desc[lang]}
+          </span>
+          <span className="mt-5 flex items-center justify-between border-t border-cream/15 pt-4">
+            <span className="display text-3xl tabular-nums text-[var(--accent)]">
+              {fmtPrice(item.price, lang)}
+            </span>
+            <span
+              className="grid h-11 w-11 place-items-center rounded-full border border-cream/25 transition-colors duration-300 group-hover:border-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-ink"
+              aria-hidden
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </span>
+        </span>
+      </button>
+    </li>
+  );
+}
+
+/** Slowly turning wax-seal stamp with the house name running around its rim. */
+function Seal({ className }: { className: string }) {
+  const id = `seal-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
+  return (
+    <svg viewBox="0 0 100 100" className={className} aria-hidden>
+      <defs>
+        <path id={id} d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
+      </defs>
+      <circle
+        cx="50"
+        cy="50"
+        r="48"
+        fill="rgb(10 8 6 / 0.55)"
+        stroke="currentColor"
+        strokeOpacity="0.5"
+      />
+      <circle cx="50" cy="50" r="27" fill="none" stroke="currentColor" strokeOpacity="0.35" />
+      <g className="origin-center animate-[spin_18s_linear_infinite] motion-reduce:animate-none">
+        {/* Latin only: Arabic shaping breaks apart when stretched along a curve. */}
+        <text
+          direction="ltr"
+          className="font-latin"
+          fill="currentColor"
+          fontSize="8.5"
+          fontWeight="600"
+          letterSpacing="1.5"
+        >
+          <textPath href={`#${id}`} textLength="230" lengthAdjust="spacing">
+            LAYALI · SIGNATURE · LAYALI · SIGNATURE ·
+          </textPath>
+        </text>
+      </g>
+      <text x="50" y="58" textAnchor="middle" fontSize="22" fill="currentColor">
+        ★
+      </text>
+    </svg>
   );
 }
