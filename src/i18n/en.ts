@@ -139,7 +139,6 @@ export const en = {
     title: "Your night starts here.",
     enter: "Enter",
     hint: "Scroll to walk in",
-    est: "EST. 2026 · AMMAN",
     open: "Open",
   },
 

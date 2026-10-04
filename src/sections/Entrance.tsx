@@ -6,7 +6,6 @@ import { cafe } from "@/data/cafe";
 import { Photo } from "@/components/Photo";
 import { Magnetic } from "@/components/Magnetic";
 import { Dust } from "@/components/Dust";
-import { OpenStatus } from "@/components/OpenStatus";
 import { Emblem, Logo } from "@/components/brand/Logo";
 
 /* Outside at night → camera pushes through the glass door. CINEMATIC. */
@@ -193,22 +192,11 @@ export function Entrance({ ready }: { ready: boolean }) {
 
       <div className="e-title absolute inset-x-0 bottom-[calc(7rem+env(safe-area-inset-bottom))] z-10 md:bottom-[7vh]">
         <div className="flex flex-col items-center px-6 text-center">
-          <div
-            className={`mb-4 flex items-center gap-3 ${fx}`}
-            style={{ transitionDelay: `100ms` }}
-          >
-            <span className="hidden h-px w-8 bg-gradient-to-r sm:block from-transparent to-gold/70 rtl:bg-gradient-to-l" />
-            <span className="whitespace-nowrap text-[0.6rem] tracking-[0.35em] text-gold/90">
-              {t.entrance.est}
-            </span>
-            <span className="hidden h-px w-8 bg-gradient-to-l sm:block from-transparent to-gold/70 rtl:bg-gradient-to-r" />
-            <OpenStatus />
-          </div>
           <h1 className="display max-w-4xl text-balance text-4xl md:text-7xl">
             {words.map((w, i) => (
               <span
                 key={i}
-                className={`inline-block overflow-hidden pb-[0.12em] align-bottom ${i < words.length - 1 ? "me-[0.28em]" : ""}`}
+                className={`-mt-[0.3em] inline-block overflow-hidden pb-[0.12em] pt-[0.3em] align-bottom ${i < words.length - 1 ? "me-[0.28em]" : ""}`}
               >
                 <span
                   className={`inline-block transition-transform duration-[1300ms] ease-[cubic-bezier(.2,.8,.2,1)] ${ready ? "translate-y-0" : "translate-y-[110%]"} ${i === words.length - 1 ? "text-gold-grad" : ""}`}
