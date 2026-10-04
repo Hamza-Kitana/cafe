@@ -11,13 +11,14 @@ import { OpenStatus } from "@/components/OpenStatus";
 
 /* Inside, looking out. The door opens, we step out and turn around. CINEMATIC. */
 export function EndOfNight() {
-  const { t, lang } = useI18n();
+  const { t, lang, dir } = useI18n();
   const { setReserveOpen } = useUI();
   const root = useRef<HTMLDivElement>(null);
   const e = t.end;
 
   useScene(root, () => {
     const scene = root.current!.querySelector<HTMLElement>(".en-scene")!;
+    const side = dir === "rtl" ? -1 : 1;
     const tl = gsap.timeline({
       defaults: { ease: "power2.inOut" },
       scrollTrigger: { trigger: scene, start: "top top", end: "+=340%", scrub: 1, pin: true },
@@ -26,8 +27,8 @@ export function EndOfNight() {
       .to(".en-lamps", { opacity: 0.35, duration: 0.8 }, 0.2)
       .to(".en-closing", { opacity: 0, duration: 0.4 }, 1)
       .to(".en-in", { scale: 2.9, duration: 1.8, ease: "power2.in" }, 0.7)
-      .to(".en-door-l", { rotateY: 100, duration: 1, ease: "power2.inOut" }, 0.9)
-      .to(".en-door-r", { rotateY: -100, duration: 1, ease: "power2.inOut" }, 0.9)
+      .to(".en-door-l", { rotationY: 100 * side, duration: 1, ease: "power2.inOut" }, 0.9)
+      .to(".en-door-r", { rotationY: -100 * side, duration: 1, ease: "power2.inOut" }, 0.9)
       .fromTo(".en-street", { scale: 1.3 }, { scale: 1, duration: 1.8 }, 0.7)
       .to(".en-in", { opacity: 0, duration: 0.4 }, 2.1);
     cue(tl, "door", 0.95);
@@ -75,7 +76,7 @@ export function EndOfNight() {
       toggleClass: { targets: ".en-info", className: "is-in" },
       once: true,
     });
-  });
+  }, [dir]);
 
   const info: [string, string, string | undefined][] = [
     [e.location, cafe.address[lang], cafe.maps.href],
@@ -127,17 +128,22 @@ export function EndOfNight() {
           </div>
           <div className="absolute left-1/2 top-1/2 h-[var(--dh)] w-[var(--dw)] -translate-x-1/2 -translate-y-1/2 [perspective:1200px]">
             <div className="absolute -inset-[10px] border-[10px] border-[#1b140f]" />
-            <div className="en-door-l glass-in absolute inset-y-0 start-0 w-1/2 origin-left rtl:origin-right">
-              <div className="absolute end-3 top-1/2 h-24 w-1.5 -translate-y-1/2 rounded bg-gold/70" />
-            </div>
-            <div className="en-door-r glass-in absolute inset-y-0 end-0 w-1/2 origin-right rtl:origin-left">
-              <div className="absolute start-3 top-1/2 h-24 w-1.5 -translate-y-1/2 rounded bg-gold/70" />
-            </div>
-            <div className="pointer-events-none absolute inset-x-0 top-[20%] text-center">
-              <div className="display inline-block -scale-x-100 text-5xl text-cream/25 md:text-6xl">
-                {e.signBack}
+            {(["l", "r"] as const).map((side) => (
+              <div
+                key={side}
+                className={`en-door-${side} glass-in absolute inset-y-0 w-1/2 overflow-hidden ${side === "l" ? "start-0 origin-left rtl:origin-right" : "end-0 origin-right rtl:origin-left"}`}
+              >
+                {/* Each leaf carries its half of the lettering, so the word splits as the doors swing. */}
+                <div
+                  className={`pointer-events-none absolute top-[20%] w-[200%] text-center [backface-visibility:hidden] ${side === "l" ? "start-0" : "end-0"}`}
+                >
+                  <span className="display text-5xl text-cream/25 md:text-6xl">{e.signBack}</span>
+                </div>
+                <div
+                  className={`absolute top-1/2 h-24 w-1.5 -translate-y-1/2 rounded bg-gold/70 ${side === "l" ? "end-3" : "start-3"}`}
+                />
               </div>
-            </div>
+            ))}
           </div>
         </div>
 
