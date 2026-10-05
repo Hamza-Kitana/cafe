@@ -112,12 +112,13 @@ export function Billiards() {
       b.at = p;
       orientBall(svg(n), n, b.m);
     };
-    const hidden = dir === "rtl" ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)";
+    // The display line-height is under 1, so the reveal reaches past the box to keep descenders.
+    const hidden = dir === "rtl" ? "inset(-20% 0% -30% 100%)" : "inset(-20% 100% -30% 0%)";
     const word = (i: number, at: number) =>
       tl.fromTo(
         `.b-word${i}`,
         { clipPath: hidden, opacity: 1 },
-        { clipPath: "inset(0 0% 0 0%)", duration: 0.8, ease: "power2.out" },
+        { clipPath: "inset(-20% 0% -30% 0%)", duration: 0.8, ease: "power2.out" },
         at,
       );
 

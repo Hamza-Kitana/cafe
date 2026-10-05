@@ -1,5 +1,5 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { isMobile, reducedMotion } from "@/lib/motion";
+import { gsap, isMobile, reducedMotion } from "@/lib/motion";
 
 export type SmokeState = { density: number; cover: number };
 
@@ -41,7 +41,6 @@ export function SmokeCanvas({
     let w = 0;
     let h = 0;
     let visible = false;
-    let raf = 0;
     const mouse = { x: -9999, y: -9999 };
     const particles: Particle[] = [];
 
@@ -102,6 +101,7 @@ export function SmokeCanvas({
 
     const step = (t: number) => {
       rects = null;
+      if (!particles.length && !state.density && !state.cover) return;
       const spawnSource = state.density * 1.4;
       for (let i = 0; i < Math.floor(spawnSource + Math.random()); i++) spawn(false);
       for (let i = 0; i < Math.floor(state.cover * 5 + Math.random() * state.cover); i++)
@@ -135,15 +135,15 @@ export function SmokeCanvas({
       ctx.globalAlpha = 1;
     };
 
-    const loop = (t: number) => {
-      raf = requestAnimationFrame(loop);
-      if (visible) step(t);
+    // Runs first in GSAP's frame, before scenes write styles, so measuring the source stays cheap.
+    const tick = (time: number) => {
+      if (visible) step(time * 1000);
     };
 
     if (reducedMotion()) {
       for (let i = 0; i < 400; i++) step(i * 16);
     } else {
-      raf = requestAnimationFrame(loop);
+      gsap.ticker.add(tick, false, true);
     }
 
     const io = new IntersectionObserver(([e]) => (visible = !!e?.isIntersecting));
@@ -157,7 +157,7 @@ export function SmokeCanvas({
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("resize", resize);
     return () => {
-      cancelAnimationFrame(raf);
+      gsap.ticker.remove(tick);
       io.disconnect();
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("resize", resize);

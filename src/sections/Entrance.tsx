@@ -8,6 +8,8 @@ import { Magnetic } from "@/components/Magnetic";
 import { Dust } from "@/components/Dust";
 import { Emblem, Logo } from "@/components/brand/Logo";
 
+const LIGHT_R = 460;
+
 /* Outside at night → camera pushes through the glass door. CINEMATIC. */
 export function Entrance({ ready }: { ready: boolean }) {
   const { t, lang } = useI18n();
@@ -67,8 +69,9 @@ export function Entrance({ ready }: { ready: boolean }) {
 
   const onMove = (e: React.PointerEvent) => {
     follow.current?.(e.clientX / window.innerWidth - 0.5, e.clientY / window.innerHeight - 0.5);
-    light.current?.style.setProperty("--lx", `${e.clientX}px`);
-    light.current?.style.setProperty("--ly", `${e.clientY}px`);
+    const el = root.current;
+    if (light.current && el)
+      light.current.style.transform = `translate(${e.clientX - el.clientWidth * 0.5 - LIGHT_R}px, ${e.clientY - el.clientHeight * 0.4 - LIGHT_R}px)`;
   };
 
   const fx = `transition-all duration-[1200ms] ease-[cubic-bezier(.2,.7,.2,1)] ${ready ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`;
@@ -92,22 +95,32 @@ export function Entrance({ ready }: { ready: boolean }) {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_42%,transparent,var(--ink)_85%)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/10 to-ink" />
       <div className="absolute inset-0 bg-amber/[0.06] mix-blend-overlay" />
-      <div
-        ref={light}
-        className="pointer-events-none absolute inset-0 mix-blend-soft-light [background:radial-gradient(460px_circle_at_var(--lx,50%)_var(--ly,40%),rgb(255_200_120/0.35),transparent_70%)]"
-      />
+      {/* moved by transform so following the pointer never repaints the scene */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden mix-blend-soft-light">
+        <div
+          ref={light}
+          className="absolute left-1/2 top-[40%] h-[920px] w-[920px] will-change-transform [background:radial-gradient(460px_circle_at_center,rgb(255_200_120/0.35),transparent_70%)]"
+          style={{ transform: `translate(${-LIGHT_R}px, ${-LIGHT_R}px)` }}
+        />
+      </div>
 
       <div className="e-fog pointer-events-none absolute inset-x-0 bottom-0 h-1/2" aria-hidden>
-        <div className="smoke absolute -bottom-20 left-[5%] h-64 w-[50vw] bg-cream/[0.07]" />
+        <div className="smoke absolute -bottom-20 left-[5%] h-64 w-[50vw]">
+          <div className="puff bg-cream/[0.07]" />
+        </div>
         <div
-          className="smoke absolute -bottom-24 right-[0%] h-72 w-[60vw] bg-cream/[0.06]"
+          className="smoke absolute -bottom-24 right-[0%] h-72 w-[60vw]"
           style={{ animationDelay: "-6s" }}
-        />
+        >
+          <div className="puff bg-cream/[0.06]" />
+        </div>
       </div>
 
       <div className="e-cam absolute inset-0 flex items-start justify-center pt-[max(6rem,12vh)] [perspective:1400px]">
         <div className="e-door relative aspect-[5/8] h-[clamp(9rem,calc(100svh-31.5rem),44vh)] [transform-style:preserve-3d] md:h-[clamp(10rem,calc(100svh-25rem),50vh)]">
-          <div className="e-glow absolute -inset-28 rounded-full bg-amber/20 blur-3xl" />
+          <div className="e-glow absolute -inset-28">
+            <div className="h-full w-full rounded-full bg-amber/20 blur-3xl" />
+          </div>
           {/* light spilling out of the door onto the pavement */}
           <div className="e-rays rays pointer-events-none absolute left-1/2 top-[30%] h-[260%] w-[420%] -translate-x-1/2 opacity-80" />
           <div className="absolute -bottom-8 left-1/2 h-16 w-[190%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgb(255_190_110/0.45),transparent)] blur-md" />
@@ -128,7 +141,9 @@ export function Entrance({ ready }: { ready: boolean }) {
                   className={`e-door-${side} door-glass absolute inset-y-0 w-1/2 ${side === "l" ? "left-0 origin-left" : "right-0 origin-right"}`}
                 >
                   {side === "l" && (
-                    <div className="e-reflect absolute -inset-y-10 -left-full w-1/2 rotate-12 bg-gradient-to-r from-transparent via-cream/25 to-transparent blur-sm" />
+                    <div className="e-reflect absolute -inset-y-10 -left-full w-1/2 rotate-12">
+                      <div className="h-full w-full bg-gradient-to-r from-transparent via-cream/25 to-transparent blur-sm" />
+                    </div>
                   )}
                   <div
                     className={`absolute top-[56%] h-[22%] w-[5px] rounded-full bg-[linear-gradient(90deg,#7a5520,#fff1c9,#b88a3e)] shadow-[0_0_8px_rgb(255_200_120/0.6)] ${side === "l" ? "right-3" : "left-3"}`}
@@ -196,10 +211,10 @@ export function Entrance({ ready }: { ready: boolean }) {
             {words.map((w, i) => (
               <span
                 key={i}
-                className={`-mt-[0.3em] inline-block overflow-hidden pb-[0.12em] pt-[0.3em] align-bottom ${i < words.length - 1 ? "me-[0.28em]" : ""}`}
+                className={`-mb-[0.16em] -mt-[0.3em] inline-block overflow-hidden pb-[0.28em] pt-[0.3em] align-bottom ${i < words.length - 1 ? "me-[0.28em]" : ""}`}
               >
                 <span
-                  className={`inline-block transition-transform duration-[1300ms] ease-[cubic-bezier(.2,.8,.2,1)] ${ready ? "translate-y-0" : "translate-y-[110%]"} ${i === words.length - 1 ? "text-gold-grad" : ""}`}
+                  className={`inline-block transition-transform duration-[1300ms] ease-[cubic-bezier(.2,.8,.2,1)] ${ready ? "translate-y-0" : "translate-y-[160%]"} ${i === words.length - 1 ? "text-gold-grad" : ""}`}
                   style={{ transitionDelay: `${200 + i * 110}ms` }}
                 >
                   {w}

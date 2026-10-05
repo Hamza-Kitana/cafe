@@ -89,19 +89,18 @@ export function NightMoments() {
       className="relative h-screen overflow-hidden bg-[#08070b]"
     >
       <div className="nm-glow pointer-events-none absolute inset-0" aria-hidden>
-        <div className="bokeh left-[12%] top-[20%] h-40 w-40 bg-amber/30" />
-        <div
-          className="bokeh left-[70%] top-[60%] h-56 w-56 bg-[#7d5cff]/20"
-          style={{ animationDelay: "-4s" }}
-        />
-        <div
-          className="bokeh left-[40%] top-[75%] h-32 w-32 bg-[#ff6a5c]/20"
-          style={{ animationDelay: "-8s" }}
-        />
-        <div
-          className="bokeh left-[82%] top-[12%] h-24 w-24 bg-gold/25"
-          style={{ animationDelay: "-2s" }}
-        />
+        <div className="bokeh left-[12%] top-[20%] h-40 w-40">
+          <div className="puff bg-amber/30" />
+        </div>
+        <div className="bokeh left-[70%] top-[60%] h-56 w-56" style={{ animationDelay: "-4s" }}>
+          <div className="puff bg-[#7d5cff]/20" />
+        </div>
+        <div className="bokeh left-[40%] top-[75%] h-32 w-32" style={{ animationDelay: "-8s" }}>
+          <div className="puff bg-[#ff6a5c]/20" />
+        </div>
+        <div className="bokeh left-[82%] top-[12%] h-24 w-24" style={{ animationDelay: "-2s" }}>
+          <div className="puff bg-gold/25" />
+        </div>
       </div>
 
       <Chapter

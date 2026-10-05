@@ -70,33 +70,44 @@ function CoffeeFx() {
     <>
       <div className="absolute inset-x-0 bottom-[8%] flex justify-center gap-[3vmin]">
         {[0, 1, 2].map((k) => (
-          <svg
+          <div
             key={k}
-            viewBox="0 0 60 220"
-            className="i-steam h-[42vmin] w-[10vmin] text-cream/40 blur-[3px]"
+            className="i-steam h-[42vmin] w-[10vmin]"
             style={{ animationDelay: `${k * 1.1}s` }}
           >
-            <path
-              d="M30 220 C 6 180, 54 150, 30 110 S 8 40, 30 0"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="10"
-              strokeLinecap="round"
-            />
-          </svg>
+            <svg viewBox="0 0 60 220" className="block h-full w-full text-cream/40 blur-[3px]">
+              <path
+                d="M30 220 C 6 180, 54 150, 30 110 S 8 40, 30 0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="10"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
         ))}
       </div>
       {BEANS.map(([, , size, , depth], k) => (
         <div
           key={k}
-          className={`i-bean absolute left-1/2 top-1/2 ${depth === 0 ? "opacity-60 blur-[2px]" : depth === 2 ? "drop-shadow-[0_10px_18px_rgb(0_0_0/0.6)]" : ""}`}
+          className={`i-bean absolute left-1/2 top-1/2 ${depth === 0 ? "opacity-60" : ""}`}
           style={{
             width: `${size}vmin`,
             marginLeft: `-${size / 2}vmin`,
             marginTop: `-${size * 0.7}vmin`,
           }}
         >
-          <Bean className="h-auto w-full" />
+          <div
+            className={
+              depth === 0
+                ? "blur-[2px]"
+                : depth === 2
+                  ? "drop-shadow-[0_10px_18px_rgb(0_0_0/0.6)]"
+                  : undefined
+            }
+          >
+            <Bean className="h-auto w-full" />
+          </div>
         </div>
       ))}
     </>
@@ -109,7 +120,7 @@ function FriendsFx({ chatter }: { chatter: { who: string; say: string }[] }) {
       {Array.from({ length: 9 }, (_, k) => (
         <span
           key={k}
-          className="i-bokeh absolute rounded-full bg-amber/30 blur-xl"
+          className="i-bokeh absolute"
           style={{
             width: `${10 + ((k * 7) % 12)}vmin`,
             height: `${10 + ((k * 7) % 12)}vmin`,
@@ -117,7 +128,9 @@ function FriendsFx({ chatter }: { chatter: { who: string; say: string }[] }) {
             top: `${(k * 29) % 85}%`,
             animationDelay: `${k * 0.7}s`,
           }}
-        />
+        >
+          <span className="block h-full w-full rounded-full bg-amber/30 blur-xl" />
+        </span>
       ))}
       {chatter.map((c, k) => {
         const [x, y, end] = BUBBLES[k]!;
@@ -156,14 +169,16 @@ function GamesFx() {
       {BALLS.map(([n, , , , size], k) => (
         <div
           key={k}
-          className="i-ball absolute left-1/2 top-1/2 drop-shadow-[0_14px_16px_rgb(0_0_0/0.65)]"
+          className="i-ball absolute left-1/2 top-1/2"
           style={{
             width: `${size}vmin`,
             marginLeft: `-${size / 2}vmin`,
             marginTop: `-${size / 2}vmin`,
           }}
         >
-          <Ball n={n} className="h-auto w-full" />
+          <div className="drop-shadow-[0_14px_16px_rgb(0_0_0/0.65)]">
+            <Ball n={n} className="h-auto w-full" />
+          </div>
         </div>
       ))}
     </div>
@@ -186,7 +201,9 @@ function NightsFx() {
           }}
         />
       ))}
-      <div className="i-moon absolute start-[10%] top-[14%] h-[16vmin] w-[16vmin] rounded-full shadow-[inset_-3.2vmin_1.4vmin_0_0_#f6e4b8] drop-shadow-[0_0_28px_rgb(246_228_184/0.55)] rotate-[-20deg]" />
+      <div className="i-moon absolute start-[10%] top-[14%] h-[16vmin] w-[16vmin] rotate-[-20deg]">
+        <div className="h-full w-full rounded-full shadow-[inset_-3.2vmin_1.4vmin_0_0_#f6e4b8] drop-shadow-[0_0_28px_rgb(246_228_184/0.55)]" />
+      </div>
       <span className="i-shoot absolute start-[8%] top-[18%] h-px w-[22vw] origin-left bg-gradient-to-r from-transparent via-cream to-cream/0 opacity-0 rtl:origin-right rtl:bg-gradient-to-l" />
     </>
   );
@@ -395,7 +412,7 @@ export function Inside() {
         {t.inside.words.map((w, i) => (
           <div key={i} className="absolute inset-x-0 flex flex-col items-center">
             <h2
-              className={`i-w${i} display flex overflow-hidden pb-[0.08em] text-[22vw] leading-[0.9] drop-shadow-[0_8px_40px_rgb(0_0_0/0.6)] md:text-[15vw] ${lang === "ar" ? "" : "tracking-tight"}`}
+              className={`i-w${i} display -mb-[0.2em] flex overflow-hidden pb-[0.28em] text-[22vw] leading-[0.9] drop-shadow-[0_8px_40px_rgb(0_0_0/0.6)] md:text-[15vw] ${lang === "ar" ? "" : "tracking-tight"}`}
             >
               {lang === "ar" ? (
                 <span className="i-char inline-block">{w}</span>

@@ -228,8 +228,10 @@ export function CardsTable() {
           <Ashtray className="absolute right-[8%] top-[10%] w-[11%] drop-shadow-[0_10px_8px_rgb(0_0_0/0.6)]" />
           <SnackBowl className="absolute bottom-[8%] left-[9%] w-[13%] drop-shadow-[0_12px_10px_rgb(0_0_0/0.6)]" />
           <TopPhone className="absolute bottom-[9%] right-[10%] w-[6.5%] rotate-[24deg] drop-shadow-[0_10px_8px_rgb(0_0_0/0.6)]" />
-          <div className="k-ball absolute bottom-[22%] right-[26%] w-[4.6%] drop-shadow-[0_8px_6px_rgb(0_0_0/0.7)]">
-            <TopBall className="h-full w-full" n={8} />
+          <div className="k-ball absolute bottom-[22%] right-[26%] w-[4.6%]">
+            <div className="drop-shadow-[0_8px_6px_rgb(0_0_0/0.7)]">
+              <TopBall className="h-full w-full" n={8} />
+            </div>
           </div>
           {DECK.map(([rank, suit], i) => (
             <div key={i} className={`k-cw${i} absolute inset-0 [transform-style:preserve-3d]`}>
@@ -272,11 +274,15 @@ export function CardsTable() {
       </p>
 
       <div className="pointer-events-none absolute inset-0 z-30" aria-hidden>
-        <div className="k-fly0 absolute left-1/3 top-1/3 w-[22vmin] opacity-0 blur-[3px]">
-          <PlayingCard rank="Q" suit="♥" style={{ transform: "rotateY(180deg)" }} />
+        <div className="k-fly0 absolute left-1/3 top-1/3 w-[22vmin] opacity-0">
+          <div className="blur-[3px]">
+            <PlayingCard rank="Q" suit="♥" style={{ transform: "rotateY(180deg)" }} />
+          </div>
         </div>
-        <div className="k-fly1 absolute left-1/3 top-1/2 w-[26vmin] opacity-0 blur-[4px]">
-          <PlayingCard rank="J" suit="♠" />
+        <div className="k-fly1 absolute left-1/3 top-1/2 w-[26vmin] opacity-0">
+          <div className="blur-[4px]">
+            <PlayingCard rank="J" suit="♠" />
+          </div>
         </div>
       </div>
 

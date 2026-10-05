@@ -136,7 +136,7 @@ export function ContactPage() {
       .timeline({ delay: 0.1 })
       .fromTo(
         ".ct-word",
-        { yPercent: 115, rotate: 5 },
+        { yPercent: 160, rotate: 5 },
         { yPercent: 0, rotate: 0, stagger: 0.08, duration: still ? 0 : 1.2, ease: "expo.out" },
       )
       .fromTo(
@@ -231,8 +231,12 @@ export function ContactPage() {
       {/* Hero */}
       <section className="relative flex min-h-[100svh] items-center overflow-hidden pb-16 pt-32 md:pt-36">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="ct-blob absolute -start-40 top-10 h-[34rem] w-[34rem] rounded-full bg-amber/20 blur-[130px]" />
-          <div className="ct-blob absolute -end-32 bottom-0 h-[30rem] w-[30rem] rounded-full bg-burgundy/30 blur-[130px]" />
+          <div className="ct-blob absolute -start-40 top-10 h-[34rem] w-[34rem]">
+            <div className="h-full w-full rounded-full bg-amber/20 blur-[130px]" />
+          </div>
+          <div className="ct-blob absolute -end-32 bottom-0 h-[30rem] w-[30rem]">
+            <div className="h-full w-full rounded-full bg-burgundy/30 blur-[130px]" />
+          </div>
           <div className="absolute inset-0 bg-[linear-gradient(rgb(255_255_255/0.03)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/0.03)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
         </div>
 
@@ -241,7 +245,10 @@ export function ContactPage() {
             <div className="ct-fade kicker">{c.kicker}</div>
             <h1 className="display mt-5 text-[19vw] leading-[0.9] md:text-[10rem] md:rtl:text-[8.5rem]">
               {c.title.split(" ").map((w, i) => (
-                <span key={i} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+                <span
+                  key={i}
+                  className="-mb-[0.2em] inline-block overflow-hidden pb-[0.28em] align-bottom"
+                >
                   <span
                     className={`ct-word me-[0.2em] inline-block ${i === 1 ? "type-serif-italic text-amber" : ""}`}
                   >

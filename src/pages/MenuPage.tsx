@@ -184,7 +184,7 @@ export function MenuPage() {
       );
       gsap.fromTo(
         section.querySelectorAll(".mp-word"),
-        { yPercent: 110 },
+        { yPercent: 160 },
         {
           yPercent: 0,
           stagger: 0.08,
@@ -308,7 +308,10 @@ export function MenuPage() {
               ch === " " ? (
                 <span key={i} className="inline-block w-[0.25em]" />
               ) : (
-                <span key={i} className="inline-block overflow-hidden pb-[0.06em] align-bottom">
+                <span
+                  key={i}
+                  className="-mb-[0.22em] inline-block overflow-hidden pb-[0.28em] align-bottom"
+                >
                   <span
                     className={`mp-char inline-block origin-bottom ${lang === "ar" ? "me-[0.2em]" : ""} ${i % 3 === 1 ? "type-serif-italic text-amber" : ""}`}
                     aria-hidden
@@ -504,7 +507,10 @@ function Category({ cat, index }: { cat: MenuCategory; index: number }) {
             style={{ color: cat.accent }}
           >
             {cat.title[lang].split(" ").map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-bottom">
+              <span
+                key={i}
+                className="-mb-[0.18em] inline-block overflow-hidden pb-[0.28em] align-bottom"
+              >
                 <span className="mp-word me-[0.2em] inline-block">{w}</span>
               </span>
             ))}

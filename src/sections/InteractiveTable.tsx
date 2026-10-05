@@ -110,8 +110,8 @@ export function InteractiveTable() {
       0,
     ).fromTo(
       ".tb-title",
-      { clipPath: "inset(0 0 100% 0)", yPercent: 30 },
-      { clipPath: "inset(0 0 0% 0)", yPercent: 0, duration: 0.8 },
+      { clipPath: "inset(-20% 0% 120% 0%)", yPercent: 30 },
+      { clipPath: "inset(-20% 0% -30% 0%)", yPercent: 0, duration: 0.8 },
       0.3,
     );
     ITEMS.forEach((it, i) => {
@@ -251,9 +251,11 @@ export function InteractiveTable() {
                 data-cursor={t.cursor.explore}
               >
                 <span
-                  className="tb-shadow absolute inset-[6%] translate-x-[6%] translate-y-[10%] rounded-full bg-black/60 blur-md"
+                  className="tb-shadow absolute inset-[6%] translate-x-[6%] translate-y-[10%]"
                   aria-hidden
-                />
+                >
+                  <span className="block h-full w-full rounded-full bg-black/60 blur-md" />
+                </span>
                 <span className="tb-lift relative block transition-transform duration-500 ease-[cubic-bezier(.2,.7,.2,1)]">
                   <it.Art className="h-auto w-full" />
                 </span>

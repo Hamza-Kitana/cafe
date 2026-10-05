@@ -79,7 +79,7 @@ export function House() {
     const still = reducedMotion();
     gsap.fromTo(
       ".h-word",
-      { yPercent: 110, rotate: 4 },
+      { yPercent: 160, rotate: 4 },
       {
         yPercent: 0,
         rotate: 0,
@@ -189,7 +189,10 @@ export function House() {
           <Chapter id="house" label={h.kicker} />
           <h2 className="h-title display mt-5 text-5xl md:text-8xl md:rtl:text-7xl">
             {h.title.split(" ").map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-bottom">
+              <span
+                key={i}
+                className="-mb-[0.18em] inline-block overflow-hidden pb-[0.28em] align-bottom"
+              >
                 <span className="h-word me-[0.22em] inline-block">{w}</span>
               </span>
             ))}

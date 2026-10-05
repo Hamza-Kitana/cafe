@@ -162,12 +162,12 @@ export function DrinksUniverse() {
                   left: `${(k * 37 + i * 11) % 88}%`,
                   top: `${((k * 29 + 13) % 78) + 6}%`,
                   animationDelay: `${k * 0.4}s`,
-                  filter: front
-                    ? "blur(5px)"
-                    : k % 3 === 0
-                      ? "blur(2px) drop-shadow(0 10px 12px rgba(0,0,0,.35))"
-                      : "drop-shadow(0 10px 12px rgba(0,0,0,.35))",
                 } as CSSProperties;
+                const filter = front
+                  ? "blur(5px)"
+                  : k % 3 === 0
+                    ? "blur(2px) drop-shadow(0 10px 12px rgba(0,0,0,.35))"
+                    : "drop-shadow(0 10px 12px rgba(0,0,0,.35))";
                 return (
                   <div
                     key={k}
@@ -175,7 +175,10 @@ export function DrinksUniverse() {
                     style={style}
                     aria-hidden
                   >
-                    <DecoShape type={type} />
+                    {/* the wrapper moves on its own layer; filtering a still child keeps the blur cached */}
+                    <div className="h-full w-full" style={{ filter }}>
+                      <DecoShape type={type} />
+                    </div>
                   </div>
                 );
               })}

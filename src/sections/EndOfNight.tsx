@@ -154,7 +154,10 @@ export function EndOfNight() {
         <div className="absolute inset-x-0 bottom-[calc(12vh+var(--tab))] z-10 flex flex-col items-center px-6 text-center">
           <h2 className="display text-6xl md:text-9xl">
             {e.title.split(" ").map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+              <span
+                key={i}
+                className="-mb-[0.2em] inline-block overflow-hidden pb-[0.28em] align-bottom"
+              >
                 <span className="en-word me-[0.2em] inline-block opacity-0">{w}</span>
               </span>
             ))}

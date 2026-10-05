@@ -167,11 +167,13 @@ export function CoffeeLab() {
       {beans.map((b, i) => (
         <div
           key={i}
-          className={`c-bean absolute top-0 h-[1.4rem] w-4 ${b.front ? "z-20 blur-[2px]" : "z-0 opacity-70 blur-[0.5px]"} ${i % 2 ? "max-md:hidden" : ""}`}
+          className={`c-bean absolute top-0 h-[1.4rem] w-4 ${b.front ? "z-20" : "z-0 opacity-70"} ${i % 2 ? "max-md:hidden" : ""}`}
           style={{ left: `${b.l}%`, scale: `${b.front ? b.s * 2.2 : b.s}` }}
           aria-hidden
         >
-          <Bean className="h-full w-full drop-shadow-[0_6px_6px_rgba(0,0,0,0.5)]" />
+          <div className={`h-full w-full ${b.front ? "blur-[2px]" : "blur-[0.5px]"}`}>
+            <Bean className="h-full w-full drop-shadow-[0_6px_6px_rgba(0,0,0,0.5)]" />
+          </div>
         </div>
       ))}
 

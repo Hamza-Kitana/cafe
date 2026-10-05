@@ -37,6 +37,11 @@ export function Marquee({
     let boost = 0;
     let heading = 1;
     let visible = false;
+    // Measured off the frame loop: reading layout right after GSAP writes would force a reflow every tick.
+    let half = el.scrollWidth / 2;
+    const ro = new ResizeObserver(() => (half = el.scrollWidth / 2));
+    ro.observe(el);
+    const setX = gsap.quickSetter(el, "x", "px");
     const skew = gsap.quickTo(el, "skewX", { duration: 0.5, ease: "power3" });
     const st = ScrollTrigger.create({
       trigger: root.current,
@@ -51,19 +56,18 @@ export function Marquee({
       },
     });
     const tick = (_t: number, dt: number) => {
-      if (!visible) return;
-      const half = el.scrollWidth / 2;
-      if (!half) return;
+      if (!visible || !half) return;
       const rate = pausedRef.current ? 0 : speed * (1 + Math.abs(boost));
       x += (reverse ? 1 : -1) * heading * rate * (dt / 1000);
       x = gsap.utils.wrap(-half, 0, x);
-      gsap.set(el, { x });
+      setX(x);
       if (reactive) skew(-boost * 0.9);
       boost *= 0.9;
     };
     gsap.ticker.add(tick);
     return () => {
       gsap.ticker.remove(tick);
+      ro.disconnect();
       st.kill();
     };
   }, [speed, reverse, reactive]);
